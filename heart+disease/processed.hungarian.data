@@ -1,3 +1,4 @@
+age, sex, cp, trestbps, chol, fbs, restecg, thalach, exang, oldpeak, slope, ca, thal, num
 28,1,2,130,132,0,2,185,0,0,?,?,?,0
 29,1,2,120,243,0,0,160,0,0,?,?,?,0
 29,1,2,140,?,0,0,170,0,0,?,?,?,0
