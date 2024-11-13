@@ -6,19 +6,26 @@
 
 import numpy as np
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import traceback
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-
+from sklearn.preprocessing import label_binarize
+from sklearn.metrics import roc_curve, auc
+from sklearn.multiclass import OneVsRestClassifier
+from itertools import cycle
+np.set_printoptions(threshold=np.inf)
 
 class DecisionTree:
 
     def __init__(self):
+        #__ Driver __
+
         self.cleveland = self.load_data()  # Load Cleveland Data
+        self.n_classes = 0  # Number of classes in data. Assigned during split_data
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_data()  # Split into testing and training data
-        self.score = 0.0  # Accuracy Score
-        self.fit_and_predict()  # Train model and predict heart disease
+        self.y_score = self.fit()  # Train model and get score
+        self.graph_roc()  # graph ROC for all 4 classes
 
 
         return
@@ -44,22 +51,53 @@ class DecisionTree:
         X = self.cleveland.iloc[:, :-1]  # data
         y = self.cleveland.iloc[:, -1]  # labels
 
+        # Binarize the output
+        y = label_binarize(y, classes=[0,1,2,3,4])
+        self.n_classes = y.shape[1]
+
         # Split data into testing and training
         return train_test_split(X, y, random_state=0, test_size=0.8)
 
 
     # Train Model and Predict Data
-    def fit_and_predict(self):
-        # Train decision tree model
-        dtc = DecisionTreeClassifier()
-        dtc.fit(self.X_train, self.y_train)
+    def fit(self):
+        classifier = OneVsRestClassifier(DecisionTreeClassifier(random_state=0))  # Create classifier object
+        y_score = classifier.fit(self.X_train, self.y_train).predict_proba(self.X_test)  # Train and test data
+        print('y_score : ')
+        print(y_score)
+        return y_score
 
-        # Predict Heart Disease
-        dtc.predict(self.X_test)
 
-        # Evaluate Accuracy
-        self.score = dtc.score(self.X_test, self.y_test)
-        print("Score : " + str(self.score))
+    # Create ROC Graph
+    def graph_roc(self):
+        fpr = dict()  # False Positive Rate
+        tpr = dict()  # True Positive Rate
+        roc_auc = dict()
+        
+        # Calculate ROC curve and AUC for each class
+        for i in range(self.n_classes):
+            fpr[i], tpr[i], _ = roc_curve(self.y_test[:, i], self.y_score[:, i])
+            roc_auc[i] = auc(fpr[i], tpr[i])
+        
+        # Class colors
+        colors = cycle(['blue', 'red', 'green', 'orange', 'purple'])
+        
+        # Plot each piont in each class on the ROC
+        for i, color in zip(range(self.n_classes), colors):
+            plt.plot(fpr[i], tpr[i], color=color,
+                     label='ROC curve of class {0} (area = {1:0.2f})'
+                           ''.format(i, roc_auc[i]))
+
+        plt.plot([0, 1], [0, 1], 'k--')
+        plt.xlim([-0.05, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve for Heart Disease Data by Class \nDecision Tree Method')
+        plt.legend(loc="lower right")
+        plt.show()
+
+        return
 
 
 
