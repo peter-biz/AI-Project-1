@@ -108,8 +108,3 @@ class DecisionTree:
         return
 
 
-
-
-if __name__ == '__main__':
-    decisionTree = DecisionTree()  # Create object
-
