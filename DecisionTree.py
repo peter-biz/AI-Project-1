@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import traceback
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.preprocessing import label_binarize
+from sklearn.preprocessing import label_binarize, normalize
 from sklearn.metrics import roc_curve, auc
 from sklearn.multiclass import OneVsRestClassifier
 from itertools import cycle
@@ -35,7 +35,13 @@ class DecisionTree:
         # Load the Cleveland dataset
         try:
             cleveland = pd.read_csv('./heart+disease/processed.cleveland.data')
-            return cleveland
+            hungary = pd.read_csv('./heart+disease/processed.hungarian.data')
+            switzerland = pd.read_csv('./heart+disease/processed.switzerland.data')
+            va = pd.read_csv('./heart+disease/processed.va.data')
+            combined_data = pd.concat([cleveland, hungary, switzerland, va])
+            print("combined_data shape: " + str(combined_data.shape))
+            print("Cleveland Shape : " + str(cleveland.shape))
+            return combined_data
         except FileNotFoundError:
             print("Error : './heart+disease/processed.cleveland.data' not found")
             print(traceback.format_exc())
@@ -51,6 +57,9 @@ class DecisionTree:
         # Split data into features and labels
         X = self.cleveland.iloc[:, :-1]  # features
         y = self.cleveland.iloc[:, -1]  # labels
+
+        # Normalize Data with l2 regularization
+        X = normalize(X, "l2")
 
         # Binarize the output
         y = label_binarize(y, classes=[0,1,2,3,4])
