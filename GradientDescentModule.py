@@ -53,7 +53,9 @@ class GradientDescent:
     def split_data(self):
         # remove rows with missing data
         self.cleveland = self.cleveland.replace(to_replace='?', value=np.nan)  # Replace question marks with null values
-        self.cleveland = self.cleveland.dropna()  # Remove all rows with null values
+        self.cleveland = self.cleveland.apply(pd.to_numeric, errors='coerce')  # Convert all columns to numeric, coercing errors to NaN
+        for column in self.cleveland.columns:
+            self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].median())  # Replace NA with median of the respective column
 
         print("Stripped Shape : " + str(self.cleveland.shape))  # Debug
 
@@ -101,7 +103,7 @@ class GradientDescent:
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('ROC Curve for Heart Disease Data by Class \nDecision Tree Method')
+        plt.title('ROC Curve for Heart Disease Data by Class \nGradient Descent Method')
         plt.legend(loc="lower right")
         plt.show()
 

@@ -52,7 +52,10 @@ class DecisionTree:
     def split_data(self):
         # remove rows with missing data
         self.cleveland = self.cleveland.replace(to_replace='?', value=np.nan)  # Replace question marks with null values
-        self.cleveland = self.cleveland.dropna()  # Remove all rows with null values
+        self.cleveland = self.cleveland.apply(pd.to_numeric, errors='coerce')  # Convert all columns to numeric, coercing errors to NaN
+        for column in self.cleveland.columns:
+            self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].median())  # Replace NA with median of the respective column
+
 
         # Split data into features and labels
         X = self.cleveland.iloc[:, :-1]  # features
@@ -73,7 +76,6 @@ class DecisionTree:
     def fit(self):
         classifier = OneVsRestClassifier(DecisionTreeClassifier(random_state=255))  # Create classifier object
         return classifier.fit(self.X_train, self.y_train).predict_proba(self.X_test)  # Train and test data
-
 
 
     # Create ROC Graph
