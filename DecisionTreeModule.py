@@ -78,7 +78,6 @@ class DecisionTree:
         return classifier.fit(self.X_train, self.y_train).predict_proba(self.X_test)  # Train and test data
 
 
-
     # Create ROC Graph
     def graph_roc(self):
         fpr = dict()  # False Positive Rate
