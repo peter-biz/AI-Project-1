@@ -52,9 +52,9 @@ class DecisionTree:
     def split_data(self):
         # remove rows with missing data
         self.cleveland = self.cleveland.replace(to_replace='?', value=np.nan)  # Replace question marks with null values
-        #self.cleveland = self.cleveland.dropna()  # Remove all rows with null values
         self.cleveland = self.cleveland.apply(pd.to_numeric, errors='coerce')  # Convert all columns to numeric, coercing errors to NaN
-        self.cleveland = self.cleveland.apply(lambda x: x.fillna(x.median()), axis=0)  # Replace NA with median of the respective column
+        for column in self.cleveland.columns:
+            self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].median())  # Replace NA with median of the respective column
 
 
         # Split data into features and labels
