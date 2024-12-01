@@ -1,4 +1,5 @@
-# Final Project
+# Intro to AI Final Project
+# By Alec Malenfant and Peter Bizoukas
 
 ## Project Description
 

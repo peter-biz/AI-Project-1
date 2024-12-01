@@ -22,7 +22,7 @@ class DecisionTree:
         self.cleveland = self.load_data()  # Load Cleveland Data
         self.n_classes = 0  # Number of classes in data. Assigned during split_data
         self.X_train, self.X_test, self.y_train, self.y_test = self.split_data()  # Split into testing and training data
-        self.y_score = self.fit()  # Train model and get score
+        self.y_score = self.fit()  # Train model and get score for ROC
         self.graph_roc()  # graph ROC for all 4 classes
 
 
@@ -30,7 +30,7 @@ class DecisionTree:
 
     # Import Data
     def load_data(self):
-        # Load the Cleveland dataset
+        # Load the datasets
         try:
             cleveland = pd.read_csv('./heart+disease/processed.cleveland.data')
             hungary = pd.read_csv('./heart+disease/processed.hungarian.data')
@@ -46,11 +46,11 @@ class DecisionTree:
 
     # Split Data
     def split_data(self):
-        # remove rows with missing data
+        # Replace missing data cells with the mean of it's given column
         self.cleveland = self.cleveland.replace(to_replace='?', value=np.nan)  # Replace question marks with null values
         self.cleveland = self.cleveland.apply(pd.to_numeric, errors='coerce')  # Convert all columns to numeric, coercing errors to NaN
         for column in self.cleveland.columns:
-            self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].median())  # Replace NA with median of the respective column
+            self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].mean())  # Replace NA with mean of the respective column
 
         # Split data into features and labels
         X = self.cleveland.iloc[:, :-1]  # features
