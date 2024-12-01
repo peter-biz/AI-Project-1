@@ -8,6 +8,7 @@ We have used 2 different classification methods to predict 5 classes of heart di
 After predicting heart disease from a test data set, the program will print 2 graphs to compare the Accuracies and ROC curves of each classification method.
 
 ## Quick Start
+Run `main.py` with python
 
 There is no required input for this .py file. Run the `main.py` file and it will create an ROC graph for the Decision Tree method. After closing that window, the program will display the ROC graph for the Gradient Descent Method. After closing that window, the program will terminate
 
