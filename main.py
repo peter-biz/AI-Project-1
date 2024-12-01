@@ -1,6 +1,6 @@
 # Alec Malenfant
 # Peter Bizoukas
-# This script is the driver for the assignment
+# This script is the driver for the project. Run this file
 
 from DecisionTreeModule import DecisionTree
 from GradientDescentModule import GradientDescent

@@ -2,8 +2,6 @@
 # Peter Bizoukas
 # This Python Script will predict heart disease using decision trees
 
-# Right now it is only using the Cleveland data
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +9,7 @@ import traceback
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import SGDClassifier
 from sklearn.preprocessing import label_binarize, normalize
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import roc_curve, auc, accuracy_score
 from sklearn.multiclass import OneVsRestClassifier
 from itertools import cycle
 
@@ -40,8 +38,6 @@ class GradientDescent:
             switzerland = pd.read_csv('./heart+disease/processed.switzerland.data')
             va = pd.read_csv('./heart+disease/processed.va.data')
             combined_data = pd.concat([cleveland, hungary, switzerland, va])
-            print("combined_data shape: " + str(combined_data.shape))
-            print("Cleveland Shape : " + str(cleveland.shape))
             return combined_data
         except FileNotFoundError:
             print("Error : './heart+disease/processed.cleveland.data' not found")
@@ -56,8 +52,6 @@ class GradientDescent:
         self.cleveland = self.cleveland.apply(pd.to_numeric, errors='coerce')  # Convert all columns to numeric, coercing errors to NaN
         for column in self.cleveland.columns:
             self.cleveland[column] = self.cleveland[column].fillna(self.cleveland[column].median())  # Replace NA with median of the respective column
-
-        print("Stripped Shape : " + str(self.cleveland.shape))  # Debug
 
         # Split data into features and labels
         X = self.cleveland.iloc[:, :-1]  # features
@@ -75,8 +69,8 @@ class GradientDescent:
 
     # Train Model and Predict Data
     def fit(self):
-        classifier = OneVsRestClassifier(SGDClassifier(random_state=255))  # Create classifier object
-        return classifier.fit(self.X_train, self.y_train).decision_function(self.X_test)  # Train and test data
+        self.classifier = OneVsRestClassifier(SGDClassifier(random_state=255))  # Create classifier object
+        return self.classifier.fit(self.X_train, self.y_train).decision_function(self.X_test)  # Train and test data
 
     # Create ROC Graph
     def graph_roc(self):
